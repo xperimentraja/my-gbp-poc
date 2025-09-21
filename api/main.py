@@ -155,3 +155,23 @@ if invitation_name:
     success = accept_invitation(invitation_name)
     if success:
         print("Service account is now a manager of the business profile!")
+
+# New API endpoint to manage the invitations
+@app.route('/api/manage-invitations', methods=['POST'])
+def manage_invitations_endpoint():
+    """Endpoint to list and accept the first pending invitation."""
+    if not SERVICE_ACCOUNT_KEY_JSON or not GBP_ACCOUNT_ID:
+        return jsonify({"message": "Environment variables not configured."}), 500
+
+    invitation_name = get_pending_invitation_name()
+    if not invitation_name:
+        return jsonify({"message": "No pending invitation found."}), 404
+
+    success = accept_invitation(invitation_name)
+    if success:
+        return jsonify({"message": "Invitation successfully accepted."}), 200
+    else:
+        return jsonify({"message": "Failed to accept the invitation."}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
