@@ -1,8 +1,13 @@
 {
-  "rewrites": [
+  "functions": {
+    "api/main.py": {
+      "runtime": "python@3.9"
+    }
+  },
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/_index"
+      "src": "/api/(.*)",
+      "dest": "api/main.py"
     }
   ]
 }
