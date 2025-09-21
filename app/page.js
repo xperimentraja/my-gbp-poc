@@ -7,11 +7,11 @@ export default function Home() {
   const [invitations, setInvitations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-				 
 
-  // Fetch both locations and invitations on initial load
+  // This useEffect no longer calls fetchData() on its own.
+  // The API calls will now only happen when you click the button.
   useEffect(() => {
-    fetchData();
+    // This hook is now empty as we want actions to be button-driven.
   }, []);
 
   const fetchData = async () => {
@@ -33,14 +33,9 @@ export default function Home() {
         throw new Error(`Failed to fetch locations: ${res.statusText}`);
       }
       const data = await res.json();
-	   
       setLocations(data);
-	 
-				
-	
     } catch (e) {
       setError(e.message);
-      // Re-throw to be caught by fetchData's catch block
       throw e;
     }
   };
@@ -62,7 +57,6 @@ export default function Home() {
 
   const updateServices = async (locationId, newService) => {
     setLoading(true);
-			 
     try {
       const services = [newService];
       const res = await fetch('/api/update-services', {
@@ -72,8 +66,6 @@ export default function Home() {
       });
       if (!res.ok) {
         throw new Error('Failed to update services');
-	 
-				   
       }
       // Re-fetch data to show the updated information
       await fetchData();
@@ -109,13 +101,10 @@ export default function Home() {
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Google Business Profile Manager</h1>
       <button onClick={fetchData} disabled={loading} style={{ marginBottom: '20px' }}>
-        {loading ? 'Fetching...' : 'Refresh All Data'}
+        {loading ? 'Fetching...' : 'Fetch All Data'}
       </button>
-   
 
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-				  
-   
 
       {invitations.length > 0 && (
         <div style={{ border: '2px solid #6366f1', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
@@ -144,45 +133,8 @@ export default function Home() {
               <h3>{location.displayName}</h3>
               <p>ID: {location.name}</p>
               <h4>Services:</h4>
-								
-	
-	   
-	  
-				  
-					
-	 
-	 
-
-			  
-	  
-		  
-												  
-   
-			  
-		   
-								
-	
-	   
-	  
-				  
-					  
-	 
-	 
-   
-
-		
-		  
-		 
-					
-				  
-	
-	
               <ul>
-				
                 {location.services && location.services.length > 0 ? (
-		
-					  
-			   
                   location.services.map((service, index) => (
                     <li key={index}>
                       <strong>ID:</strong> {service.serviceId}
@@ -205,6 +157,5 @@ export default function Home() {
         </div>
       )}
     </div>
-	 
   );
 }
